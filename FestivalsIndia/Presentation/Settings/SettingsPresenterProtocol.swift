@@ -7,4 +7,5 @@ protocol SettingsPresenting: AnyObject {
     func openSystemSettings()
     func onAppear()
     func dismissAlert()
+    func setAppearanceMode(_ mode: AppearanceMode)
 }

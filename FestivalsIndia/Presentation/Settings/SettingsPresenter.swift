@@ -19,12 +19,14 @@ final class SettingsPresenter: ObservableObject, SettingsPresenting {
         self.notificationService = notificationService
         let year = Calendar.current.component(.year, from: .now)
         self.yearRange = yearRange ?? year...(year + 5)
+        let savedAppearance = AppearanceMode(rawValue: UserDefaults.standard.integer(forKey: "appearanceMode")) ?? .system
         self.viewState = SettingsViewState(
             notificationsEnabled: false,
             festivalCount: repository.fetchAll().count,
             regionCount: Region.allCases.filter { $0 != .all }.count,
             appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0",
-            showOpenSettingsAlert: false
+            showOpenSettingsAlert: false,
+            appearanceMode: savedAppearance
         )
     }
 
@@ -57,5 +59,10 @@ final class SettingsPresenter: ObservableObject, SettingsPresenting {
 
     func dismissAlert() {
         viewState.showOpenSettingsAlert = false
+    }
+
+    func setAppearanceMode(_ mode: AppearanceMode) {
+        viewState.appearanceMode = mode
+        UserDefaults.standard.set(mode.rawValue, forKey: "appearanceMode")
     }
 }

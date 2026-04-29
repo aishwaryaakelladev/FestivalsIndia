@@ -7,6 +7,7 @@ struct SettingsView<P: SettingsPresenting & ObservableObject>: View {
     var body: some View {
         NavigationStack {
             List {
+                appearanceSection
                 notificationsSection
                 statsSection
                 howItWorksSection
@@ -29,6 +30,19 @@ struct SettingsView<P: SettingsPresenting & ObservableObject>: View {
     }
 
     // MARK: - Sections
+
+    private var appearanceSection: some View {
+        Section {
+            Picker("Appearance", selection: appearanceModeBinding) {
+                ForEach(AppearanceMode.allCases, id: \.self) { mode in
+                    Text(mode.label).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+        } header: {
+            Text("Appearance")
+        }
+    }
 
     private var notificationsSection: some View {
         Section {
@@ -97,6 +111,13 @@ struct SettingsView<P: SettingsPresenting & ObservableObject>: View {
         Binding(
             get: { presenter.viewState.notificationsEnabled },
             set: { _ in Task { await presenter.toggleNotifications() } }
+        )
+    }
+
+    private var appearanceModeBinding: Binding<AppearanceMode> {
+        Binding(
+            get: { presenter.viewState.appearanceMode },
+            set: { presenter.setAppearanceMode($0) }
         )
     }
 
